@@ -1,118 +1,118 @@
 {
   "spotify_support_agent": {
     "intent": {
-      "accuracy": 0.6,
-      "macro_precision": 0.5,
-      "macro_recall": 0.6,
-      "macro_f1": 0.5333333333333333,
+      "accuracy": 0.8,
+      "macro_precision": 0.75,
+      "macro_recall": 0.86,
+      "macro_f1": 0.7244444444444444,
       "per_class_report": {
         "Audio/Playback Issue": {
-          "precision": 0.0,
-          "recall": 0.0,
-          "f1-score": 0.0,
-          "support": 1.0
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1-score": 0.6666666666666666,
+          "support": 4.0
         },
         "Feature Request": {
-          "precision": 0.0,
-          "recall": 0.0,
-          "f1-score": 0.0,
+          "precision": 0.25,
+          "recall": 1.0,
+          "f1-score": 0.4,
           "support": 1.0
         },
         "General Inquiry/Other": {
-          "precision": 0.5,
-          "recall": 1.0,
-          "f1-score": 0.6666666666666666,
-          "support": 1.0
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1-score": 0.8888888888888888,
+          "support": 10.0
         },
         "Login/Account Issue": {
           "precision": 1.0,
           "recall": 1.0,
           "f1-score": 1.0,
-          "support": 1.0
+          "support": 4.0
         },
         "Subscription/Billing": {
-          "precision": 1.0,
-          "recall": 1.0,
-          "f1-score": 1.0,
-          "support": 1.0
-        },
-        "accuracy": 0.6,
-        "macro avg": {
-          "precision": 0.5,
-          "recall": 0.6,
-          "f1-score": 0.5333333333333333,
-          "support": 5.0
-        },
-        "weighted avg": {
-          "precision": 0.5,
-          "recall": 0.6,
-          "f1-score": 0.5333333333333333,
-          "support": 5.0
-        }
-      }
-    },
-    "escalation": {
-      "accuracy": 0.8,
-      "escalation_recall": 0.0,
-      "escalation_precision": 0.0,
-      "escalation_f1": 0.0,
-      "false_negative_rate": 1.0,
-      "false_positive_rate": 0.0,
-      "true_positives": 0,
-      "false_positives": 0,
-      "true_negatives": 4,
-      "false_negatives": 1
-    }
-  },
-  "simple_baseline": {
-    "intent": {
-      "accuracy": 0.8,
-      "macro_precision": 0.7,
-      "macro_recall": 0.8,
-      "macro_f1": 0.7333333333333333,
-      "per_class_report": {
-        "Audio/Playback Issue": {
-          "precision": 1.0,
-          "recall": 1.0,
-          "f1-score": 1.0,
-          "support": 1.0
-        },
-        "Feature Request": {
-          "precision": 0.0,
-          "recall": 0.0,
-          "f1-score": 0.0,
-          "support": 1.0
-        },
-        "General Inquiry/Other": {
           "precision": 0.5,
           "recall": 1.0,
           "f1-score": 0.6666666666666666,
-          "support": 1.0
-        },
-        "Login/Account Issue": {
-          "precision": 1.0,
-          "recall": 1.0,
-          "f1-score": 1.0,
-          "support": 1.0
-        },
-        "Subscription/Billing": {
-          "precision": 1.0,
-          "recall": 1.0,
-          "f1-score": 1.0,
           "support": 1.0
         },
         "accuracy": 0.8,
         "macro avg": {
-          "precision": 0.7,
-          "recall": 0.8,
-          "f1-score": 0.7333333333333333,
-          "support": 5.0
+          "precision": 0.75,
+          "recall": 0.86,
+          "f1-score": 0.7244444444444444,
+          "support": 20.0
         },
         "weighted avg": {
-          "precision": 0.7,
+          "precision": 0.9375,
           "recall": 0.8,
-          "f1-score": 0.7333333333333333,
-          "support": 5.0
+          "f1-score": 0.8311111111111111,
+          "support": 20.0
+        }
+      }
+    },
+    "escalation": {
+      "accuracy": 0.85,
+      "escalation_recall": 0.0,
+      "escalation_precision": 0.0,
+      "escalation_f1": 0.0,
+      "false_negative_rate": 1.0,
+      "false_positive_rate": 0.05555555555555555,
+      "true_positives": 0,
+      "false_positives": 1,
+      "true_negatives": 17,
+      "false_negatives": 2
+    }
+  },
+  "simple_baseline": {
+    "intent": {
+      "accuracy": 0.85,
+      "macro_precision": 0.7538461538461538,
+      "macro_recall": 0.7,
+      "macro_f1": 0.7167701863354037,
+      "per_class_report": {
+        "Audio/Playback Issue": {
+          "precision": 1.0,
+          "recall": 0.75,
+          "f1-score": 0.8571428571428571,
+          "support": 4.0
+        },
+        "Feature Request": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 1.0
+        },
+        "General Inquiry/Other": {
+          "precision": 0.7692307692307693,
+          "recall": 1.0,
+          "f1-score": 0.8695652173913043,
+          "support": 10.0
+        },
+        "Login/Account Issue": {
+          "precision": 1.0,
+          "recall": 0.75,
+          "f1-score": 0.8571428571428571,
+          "support": 4.0
+        },
+        "Subscription/Billing": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 1.0
+        },
+        "accuracy": 0.85,
+        "macro avg": {
+          "precision": 0.7538461538461538,
+          "recall": 0.7,
+          "f1-score": 0.7167701863354037,
+          "support": 20.0
+        },
+        "weighted avg": {
+          "precision": 0.8346153846153846,
+          "recall": 0.85,
+          "f1-score": 0.827639751552795,
+          "support": 20.0
         }
       }
     },
@@ -123,9 +123,9 @@
       "escalation_f1": 1.0,
       "false_negative_rate": 0.0,
       "false_positive_rate": 0.0,
-      "true_positives": 1,
+      "true_positives": 2,
       "false_positives": 0,
-      "true_negatives": 4,
+      "true_negatives": 18,
       "false_negatives": 0
     }
   },
@@ -140,7 +140,7 @@
           "precision": 0.2,
           "recall": 1.0,
           "f1-score": 0.3333333333333333,
-          "support": 1.0
+          "support": 4.0
         },
         "Feature Request": {
           "precision": 0.0,
@@ -152,13 +152,13 @@
           "precision": 0.0,
           "recall": 0.0,
           "f1-score": 0.0,
-          "support": 1.0
+          "support": 10.0
         },
         "Login/Account Issue": {
           "precision": 0.0,
           "recall": 0.0,
           "f1-score": 0.0,
-          "support": 1.0
+          "support": 4.0
         },
         "Subscription/Billing": {
           "precision": 0.0,
@@ -171,25 +171,25 @@
           "precision": 0.04,
           "recall": 0.2,
           "f1-score": 0.06666666666666667,
-          "support": 5.0
+          "support": 20.0
         },
         "weighted avg": {
           "precision": 0.04,
           "recall": 0.2,
           "f1-score": 0.06666666666666667,
-          "support": 5.0
+          "support": 20.0
         }
       }
     },
     "escalation": {
-      "accuracy": 0.2,
+      "accuracy": 0.1,
       "escalation_recall": 1.0,
-      "escalation_precision": 0.2,
-      "escalation_f1": 0.3333333333333333,
+      "escalation_precision": 0.1,
+      "escalation_f1": 0.18181818181818182,
       "false_negative_rate": 0.0,
       "false_positive_rate": 1.0,
-      "true_positives": 1,
-      "false_positives": 4,
+      "true_positives": 2,
+      "false_positives": 18,
       "true_negatives": 0,
       "false_negatives": 0
     }
