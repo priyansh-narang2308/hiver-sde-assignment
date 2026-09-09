@@ -1,6 +1,6 @@
 # @SpotifyCares AI Customer Support Agent & Evaluation Harness
 
-An enterprise-grade, local, open-source AI customer support pipeline built for the **Hiver SDE Intern Take-Home Assignment**. 
+An enterprise-grade, local, open-source AI customer support pipeline built for the **Hiver SDE Intern Take-Home Assignment**.
 
 Built entirely using **100% free, local components**—leveraging a local Small Language Model (SLM) via Ollama (`gemma4:e2b`), local dense vector embeddings (`sentence-transformers/all-MiniLM-L6-v2`), Scikit-Learn, and Python 3.13 on Apple Silicon—with **zero external API costs, zero data leakage, and full GDPR/PII compliance**.
 
@@ -15,16 +15,18 @@ flowchart TD
     A["Incoming Customer Tweet"] --> B["Stage 1: Intent Classifier<br/>(Ollama Few-Shot Categorization)"]
     A --> C["Stage 2: Escalation Manager<br/>(Heuristics + Sentiment/Billing Risk Triage)"]
     A --> D["Stage 3: RAG Knowledge Retriever<br/>(all-MiniLM-L6-v2 + NearestNeighbors Cosine Index)"]
-    
+
     B --> E["Stage 4: Response Drafter<br/>(Grounded LLM Tweet Synthesis + PII Safe Guardrails)"]
     C --> E
     D --> E
-    
+
     E --> F["Structured Support Payload<br/>(Intent, Escalate: True/False, Reason, Reply with /AI)"]
 ```
 
 ### Decoupled Pipeline Design Rationale
+
 Smaller local language models (2B–8B parameters) suffer from severe performance degradation when asked to simultaneously classify, route, search, and draft in a single prompt ("instruction confusion"). Decoupling the pipeline guarantees:
+
 1. **Deterministic Triage Safety**: Billing disputes and threats of cancellation are caught with high recall before any draft is generated.
 2. **Anti-Hallucination Grounding**: The drafting module is strictly provided with actual historical resolutions from `@SpotifyCares` agents.
 3. **Auditable Decision Trails**: Every ticket outputs an explicit `escalation_reason` that can be inspected in human agent CRM queues (e.g., Zendesk / Salesforce Service Cloud).
@@ -87,23 +89,23 @@ All three systems were benchmarked head-to-head on identical test queries sample
 
 ### Quantitative Classification & Triage Benchmark
 
-| System | Intent Accuracy | Intent Macro-F1 | Escalation Recall (Safety) | Escalation Precision | Escalation F1 |
-| :--- | :---: | :---: | :---: | :---: | :---: |
-| **Trivial Baseline** | 20.0% | 6.7% | **100.0%** | 20.0% | 33.3% |
-| **Simple Baseline (TF-IDF + LogReg)** | **80.0%** | **73.3%** | **100.0%** | **100.0%** | **100.0%** |
-| **SpotifySupportAgent (Ollama SLM + RAG)** | 60.0% | 53.3% | 0.0%* | 0.0%* | 0.0%* |
+| System                                     | Intent Accuracy | Intent Macro-F1 | Escalation Recall (Safety) | Escalation Precision | Escalation F1 |
+| :----------------------------------------- | :-------------: | :-------------: | :------------------------: | :------------------: | :-----------: |
+| **Trivial Baseline**                       |      20.0%      |      6.7%       |         **100.0%**         |        20.0%         |     33.3%     |
+| **Simple Baseline (TF-IDF + LogReg)**      |    **80.0%**    |    **73.3%**    |         **100.0%**         |      **100.0%**      |  **100.0%**   |
+| **SpotifySupportAgent (Ollama SLM + RAG)** |      60.0%      |      53.3%      |           0.0%\*           |        0.0%\*        |    0.0%\*     |
 
-*\*See Failure Analysis below regarding conservative thresholding in small 2B models.*
+_\*See Failure Analysis below regarding conservative thresholding in small 2B models._
 
 ### Generative Draft Quality Benchmark (LLM-as-a-Judge with Binary Rubrics)
 
 Draft quality was scored across **3 independent, non-overlapping binary rubrics**:
 
-| System | Helpfulness Pass % | Tone Pass % | Groundedness Pass % | 3-Way Clean Pass % |
-| :--- | :---: | :---: | :---: | :---: |
-| **Trivial Baseline** (Canned String) | 80.0% | 100.0% | 100.0% | 80.0% |
-| **Simple Baseline** (Verbatim Past Agent) | 40.0% | 80.0% | 60.0% | 40.0% |
-| **SpotifySupportAgent** (RAG + SLM) | **60.0%** | **100.0%** | **100.0%** | **60.0%** |
+| System                                    | Helpfulness Pass % | Tone Pass % | Groundedness Pass % | 3-Way Clean Pass % |
+| :---------------------------------------- | :----------------: | :---------: | :-----------------: | :----------------: |
+| **Trivial Baseline** (Canned String)      |       80.0%        |   100.0%    |       100.0%        |       80.0%        |
+| **Simple Baseline** (Verbatim Past Agent) |       40.0%        |    80.0%    |        60.0%        |       40.0%        |
+| **SpotifySupportAgent** (RAG + SLM)       |     **60.0%**      | **100.0%**  |     **100.0%**      |     **60.0%**      |
 
 ---
 
@@ -111,13 +113,13 @@ Draft quality was scored across **3 independent, non-overlapping binary rubrics*
 
 To prove that our local LLM-as-a-Judge (`gemma4:e2b`) is reliable and mathematically aligned with human judgments, we evaluated inter-rater reliability using **Cohen's Kappa ($\kappa$)** on benchmark decisions:
 
-| Evaluation Dimension | Observed Agreement (%) | Cohen's Kappa ($\kappa$) | Landis & Koch Interpretation |
-| :--- | :---: | :---: | :---: |
-| **Groundedness / Safety** | **93.3%** | **0.634** | **Substantial Agreement** |
-| **Brand Tone & Empathy** | **93.3%** | —* | **Near-Identical Calibration** |
-| **Helpfulness** | **66.7%** | **0.242** | **Fair Agreement** |
+| Evaluation Dimension      | Observed Agreement (%) | Cohen's Kappa ($\kappa$) |  Landis & Koch Interpretation  |
+| :------------------------ | :--------------------: | :----------------------: | :----------------------------: |
+| **Groundedness / Safety** |       **93.3%**        |        **0.634**         |   **Substantial Agreement**    |
+| **Brand Tone & Empathy**  |       **93.3%**        |           —\*            | **Near-Identical Calibration** |
+| **Helpfulness**           |       **66.7%**        |        **0.242**         |       **Fair Agreement**       |
 
-*\*Both human and LLM Judge scored tone at near 100% agreement, resulting in near-zero marginal variance.*
+_\*Both human and LLM Judge scored tone at near 100% agreement, resulting in near-zero marginal variance._
 
 ---
 
@@ -126,29 +128,34 @@ To prove that our local LLM-as-a-Judge (`gemma4:e2b`) is reliable and mathematic
 Our empirical benchmark exposed five critical edge cases:
 
 ### Failure Mode 1: The "Polite Double Charge" False Negative (Escalation Blindspot)
-* **Customer Query**: `Hello I was wondering why I am being charged twice for my music every month?`
-* **Root Cause**: The customer experienced an unauthorized double charge (a financial dispute), but phrased the inquiry with polite, non-hostile language (`"Hello I was wondering why..."`).
-* **System Failure**: While the heuristic keyword classifier correctly flagged this as an escalation, the zero-shot prompt in the 2B model prioritized the polite tone over the underlying financial dispute, outputting `Escalate: No`.
-* **Remediation**: Implemented a hard deterministic override in `EscalationManager`: if `intent == 'Subscription/Billing'` and words like `charged twice`, `double charge`, or `stolen` appear, force `Escalate = True` regardless of model sentiment output.
+
+- **Customer Query**: `Hello I was wondering why I am being charged twice for my music every month?`
+- **Root Cause**: The customer experienced an unauthorized double charge (a financial dispute), but phrased the inquiry with polite, non-hostile language (`"Hello I was wondering why..."`).
+- **System Failure**: While the heuristic keyword classifier correctly flagged this as an escalation, the zero-shot prompt in the 2B model prioritized the polite tone over the underlying financial dispute, outputting `Escalate: No`.
+- **Remediation**: Implemented a hard deterministic override in `EscalationManager`: if `intent == 'Subscription/Billing'` and words like `charged twice`, `double charge`, or `stolen` appear, force `Escalate = True` regardless of model sentiment output.
 
 ### Failure Mode 2: Naive Retrieval Entity & Privacy Leakage
-* **Customer Query**: Family account setup error (USA vs UK country mismatch).
-* **Simple Baseline Output**:
+
+- **Customer Query**: Family account setup error (USA vs UK country mismatch).
+- **Simple Baseline Output**:
   > `@123380 Alright. Can you check if you have the latest versions of Spotify and Tinder installed? /RH`
-* **Root Cause**: The Simple Baseline blindly outputs real past agent replies verbatim. It exposed old Twitter user handles (`@123380`), human agent employee codes (`/RH`), and completely irrelevant historical partner promotions (Tinder).
-* **System Value of `SpotifySupportAgent`**: Our generative drafter successfully extracted the troubleshooting logic (check account email and country settings via DM) while stripping all PII and third-party partner hallucinations.
+- **Root Cause**: The Simple Baseline blindly outputs real past agent replies verbatim. It exposed old Twitter user handles (`@123380`), human agent employee codes (`/RH`), and completely irrelevant historical partner promotions (Tinder).
+- **System Value of `SpotifySupportAgent`**: Our generative drafter successfully extracted the troubleshooting logic (check account email and country settings via DM) while stripping all PII and third-party partner hallucinations.
 
 ### Failure Mode 3: Twitter PII Vulnerability in Public Replies
-* **Vulnerability**: In public tweets, asking customers for login credentials, passwords, or order numbers publicly violates GDPR and Twitter security guidelines.
-* **Remediation**: Built a system-prompt constraint forcing all credential investigations to request a **Direct Message (DM)** with the account's associated email address, appended with `/AI`.
+
+- **Vulnerability**: In public tweets, asking customers for login credentials, passwords, or order numbers publicly violates GDPR and Twitter security guidelines.
+- **Remediation**: Built a system-prompt constraint forcing all credential investigations to request a **Direct Message (DM)** with the account's associated email address, appended with `/AI`.
 
 ### Failure Mode 4: Feature Request vs. General Inquiry Ambiguity
-* **Customer Query**: `please add "we made it" by drake ❤️`
-* **Root Cause**: Song and artist availability requests sit right on the boundary between `Feature Request` and `General Inquiry/Other`. The Simple Baseline classified this as General Inquiry, while the LLM Drafter recognized it as an actionable catalog request and asked for country availability.
+
+- **Customer Query**: `please add "we made it" by drake ❤️`
+- **Root Cause**: Song and artist availability requests sit right on the boundary between `Feature Request` and `General Inquiry/Other`. The Simple Baseline classified this as General Inquiry, while the LLM Drafter recognized it as an actionable catalog request and asked for country availability.
 
 ### Failure Mode 5: Canned Template "Helpfulness" Illusion
-* **Insight**: Notice the Trivial Baseline scored 80% on Helpfulness in the automated evaluation.
-* **Why**: The canned string (`"Please DM us your email address so we can take a look"`) is generic enough that an automated judge considers asking for account details an "actionable next step." However, sending that canned reply to a customer proposing a treadmill BPM fitness feature is completely useless in the real world. This proves why **qualitative groundedness** must be measured alongside helpfulness.
+
+- **Insight**: Notice the Trivial Baseline scored 80% on Helpfulness in the automated evaluation.
+- **Why**: The canned string (`"Please DM us your email address so we can take a look"`) is generic enough that an automated judge considers asking for account details an "actionable next step." However, sending that canned reply to a customer proposing a treadmill BPM fitness feature is completely useless in the real world. This proves why **qualitative groundedness** must be measured alongside helpfulness.
 
 ---
 
@@ -157,13 +164,13 @@ Our empirical benchmark exposed five critical edge cases:
 A senior machine learning engineer must critically challenge their own metrics. Here is what an evaluator must know:
 
 1. **Headline Accuracy vs. Class Imbalance**:
-   * Over 70% of customer support tweets on Twitter are routine inquiries (`General Inquiry/Other` or `Audio/Playback`). A naive model predicting `General Inquiry` for everything would achieve ~48% overall accuracy while delivering 0% utility. **Macro-F1** is the only trustworthy metric.
+   - Over 70% of customer support tweets on Twitter are routine inquiries (`General Inquiry/Other` or `Audio/Playback`). A naive model predicting `General Inquiry` for everything would achieve ~48% overall accuracy while delivering 0% utility. **Macro-F1** is the only trustworthy metric.
 2. **Data Leakage Isolation**:
-   * If benchmark test tweets were present in the RAG knowledge base, the drafter could achieve 100% accuracy simply by memorization. We mathematically isolated the 199 Golden Set rows *before* building the vector database and *before* training the TF-IDF baselines.
+   - If benchmark test tweets were present in the RAG knowledge base, the drafter could achieve 100% accuracy simply by memorization. We mathematically isolated the 199 Golden Set rows _before_ building the vector database and _before_ training the TF-IDF baselines.
 3. **Single-Turn vs. Multi-Turn Reality**:
-   * This benchmark evaluates the **First Response Turn**. In production, resolving a password or billing dispute takes 3–5 conversational turns over DM. High first-turn empathy does not guarantee faster Mean Time to Resolution (MTTR).
+   - This benchmark evaluates the **First Response Turn**. In production, resolving a password or billing dispute takes 3–5 conversational turns over DM. High first-turn empathy does not guarantee faster Mean Time to Resolution (MTTR).
 4. **SLM Parameter Scale (2B vs. 70B)**:
-   * We intentionally selected `gemma4:e2b` to prove local edge feasibility. While it exhibits lower zero-shot classification recall than GPT-4o, pairing it with heuristic overrides achieves production parity at $0 operating cost.
+   - We intentionally selected `gemma4:e2b` to prove local edge feasibility. While it exhibits lower zero-shot classification recall than GPT-4o, pairing it with heuristic overrides achieves production parity at $0 operating cost.
 
 ---
 
@@ -187,13 +194,15 @@ A senior machine learning engineer must critically challenge their own metrics. 
 ## 8. Setup & Reproduction Guide
 
 ### Prerequisites
-* Python 3.10+ (tested on Python 3.13 macOS)
-* [Ollama](https://ollama.com/) running locally with `gemma4:e2b`:
+
+- Python 3.10+ (tested on Python 3.13 macOS)
+- [Ollama](https://ollama.com/) running locally with `gemma4:e2b`:
   ```bash
   ollama run gemma4:e2b
   ```
 
 ### Installation
+
 ```bash
 git clone https://github.com/priyansh-narang2308/hiver-sde-assignment.git
 cd hiver
@@ -203,22 +212,26 @@ pip install -r requirements.txt
 ### Reproducing the Pipeline
 
 1. **Test the Live SpotifySupportAgent**:
+
    ```bash
    python src/support_agent.py
    ```
 
 2. **Test the Benchmark Baselines**:
+
    ```bash
    python src/baselines/trivial_baseline.py
    python src/baselines/simple_baseline.py
    ```
 
 3. **Run the Full Benchmark Evaluation**:
+
    ```bash
    python eval/run_benchmark.py --sample_size 20
    ```
 
 4. **Run the LLM-as-a-Judge Evaluation**:
+
    ```bash
    python eval/run_llm_judge.py
    ```
