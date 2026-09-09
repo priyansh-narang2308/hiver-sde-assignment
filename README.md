@@ -154,7 +154,7 @@ Draft quality was scored across **3 independent, non-overlapping binary rubrics*
 
 ---
 
-## 4. Human-AI Agreement (Cohen's Kappa)
+## 5. Human-AI Agreement (Cohen's Kappa)
 
 To prove that our local LLM-as-a-Judge (`gemma4:e2b`) is reliable and mathematically aligned with human judgments, we evaluated inter-rater reliability using **Cohen's Kappa ($\kappa$)** on benchmark decisions:
 
@@ -168,7 +168,7 @@ _\*Both human and LLM Judge scored tone at near 100% agreement, resulting in nea
 
 ---
 
-## 5. Failure Analysis: Deep-Dive into Top 5 Failure Modes
+## 6. Failure Analysis: Deep-Dive into Top 5 Failure Modes
 
 Our empirical benchmark exposed five critical edge cases:
 
@@ -204,7 +204,7 @@ Our empirical benchmark exposed five critical edge cases:
 
 ---
 
-## 6. What Is Misleading About the Headline Numbers?
+## 7. What Is Misleading About the Headline Numbers?
 
 A senior machine learning engineer must critically challenge their own metrics. Here is what an evaluator must know:
 
@@ -219,7 +219,7 @@ A senior machine learning engineer must critically challenge their own metrics. 
 
 ---
 
-## 7. Decision Log: 12 Non-Obvious Engineering Decisions
+## 8. Decision Log: 12 Non-Obvious Engineering Decisions
 
 1. **100% Free & Local Stack**: Chose local Ollama and CPU embeddings over paid proprietary APIs (OpenAI/Anthropic). This guarantees zero inference cost, zero data exposure to third parties, and local offline execution.
 2. **Replacing FAISS with Scikit-Learn `NearestNeighbors`**: Python 3.13 on Apple Silicon currently lacks precompiled `faiss-cpu` wheels, causing fatal compilation errors during `pip install`. Replaced FAISS with `sklearn.neighbors.NearestNeighbors(metric='cosine', algorithm='brute')`, which runs exact cosine search over 43,000 vectors in <15ms on CPU.
@@ -236,7 +236,22 @@ A senior machine learning engineer must critically challenge their own metrics. 
 
 ---
 
-## 8. Setup & Reproduction Guide
+## 9. What We'd Do Next with One More Week
+
+Given seven more engineering days, our roadmap focuses on production hardening, latency reduction, and multi-turn conversation memory:
+
+1. **LoRA Fine-Tuning on Brand Tone & Safety**:
+   - Rather than relying solely on zero-shot prompting, fine-tune an open SLM (e.g. `Llama-3.2-3B` or `Gemma-2-2B`) using LoRA (Low-Rank Adaptation) on the 43,000 historical `@SpotifyCares` thread pairs. This would bake Spotify's exact empathetic tone and `/AI` formatting directly into the model weights, cutting prompt length and inference latency by 40%.
+2. **Multi-Turn DM Transition State Tracking**:
+   - Build a stateful session manager that transitions seamlessly from public tweets to private Direct Messages. Track conversation states: `AWAITING_EMAIL_DM` -> `CREDENTIAL_VERIFIED` -> `RESOLUTION_OFFERED`.
+3. **Hybrid Sparse-Dense Vector Index (BM25 + Dense RAG)**:
+   - Combine dense vector embeddings (`all-MiniLM-L6-v2`) with sparse BM25 indexing (Reciprocal Rank Fusion). This eliminates vocabulary mismatch when users cite obscure error codes (e.g. `Error 30`, `Firewall code 103`) that dense embeddings occasionally smooth over.
+4. **Live Human-in-the-Loop Webhook Integration**:
+   - Implement an outgoing webhook connector for Hiver / Zendesk / Slack. When `escalate: True` is triggered, post an internal triage alert containing the user's tweet, the AI's proposed response draft, and the escalation reason for 1-click human agent approval.
+
+---
+
+## 10. Setup & Reproduction Guide
 
 ### Prerequisites
 
@@ -303,7 +318,7 @@ Given seven more engineering days, our roadmap focuses on production hardening, 
 
 ---
 
-## 10. Citations & Attributions
+## 11. Citations & Attributions
 
 In adherence to academic and engineering integrity, all open datasets, libraries, and architectures utilized in this repository are credited below:
 
