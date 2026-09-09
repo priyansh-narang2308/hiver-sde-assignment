@@ -1,11 +1,9 @@
 pandas
 numpy
 scikit-learn
-chromadb
 sentence-transformers
 ollama
 pytest
 tqdm
 jupyter
 kaggle
-faiss
