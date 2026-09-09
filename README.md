@@ -17,10 +17,10 @@ In consumer music streaming customer support:
 3. **High-Recall Escalation Safety**: Preventing churn by prioritizing angry users, billing errors, and cancellation threats straight to human specialists with a clear, auditable escalation reason.
 4. **Transparent Identity**: Compliantly signing off automated tweets with `/AI`, matching the `@SpotifyCares` agent signature style (e.g., `/CE`, `/RM`).
 
-### What We Chose NOT to Build (and Why)
+### What I Chose NOT to Build (and Why)
 
-1. **No Direct Backend API Execution**: We explicitly chose _not_ to give the language model write-access tools to execute live refunds, password resets, or account deletions. In high-stakes production systems, granting autonomous payment execution to a generative model without human authorization creates severe security vulnerabilities. The agent serves as a high-precision triage and drafting co-pilot.
-2. **No Public Multi-Turn Resolution**: We chose not to resolve multi-turn issues publicly on Twitter threads. Account-specific issues require identity verification, which must occur privately over DMs.
+1. **No Direct Backend API Execution**: I explicitly chose _not_ to give the language model write-access tools to execute live refunds, password resets, or account deletions. In high-stakes production systems, granting autonomous payment execution to a generative model without human authorization creates severe security vulnerabilities. The agent serves as a high-precision triage and drafting co-pilot.
+2. **No Public Multi-Turn Resolution**: I chose not to resolve multi-turn issues publicly on Twitter threads. Account-specific issues require identity verification, which must occur privately over DMs.
 
 ### System Architecture
 
@@ -106,7 +106,7 @@ The benchmark evaluation relies on a rigorously curated **199-example Golden Eva
 ### Sampling Strategy (Stratified Semantic Clustering)
 
 - **The Problem with Uniform Random Sampling**: Standard random sampling over Twitter customer support data heavily over-samples generic complaints and greetings while missing critical low-frequency events (e.g. complex billing errors, unauthorized charges, regional family account discrepancies).
-- **Our Solution**:
+- **My Solution**:
   1. Embedded all 43,206 `@SpotifyCares` customer queries into 384-dimensional dense vectors using `all-MiniLM-L6-v2`.
   2. Fitted an unsupervised **K-Means clustering model ($k=15$)** across the vector space to partition customer inquiries into distinct semantic clusters.
   3. Conducted **stratified sampling** across all 15 clusters to select 199 diverse queries, ensuring representation across edge cases, rare billing issues, and technical audio bugs.
@@ -303,7 +303,7 @@ Draft quality was scored across **3 independent, non-overlapping binary rubrics*
 
 ## 5. Human-AI Agreement (Cohen's Kappa)
 
-To prove that our local LLM-as-a-Judge (`gemma4:e2b`) is reliable and mathematically aligned with human judgments, we evaluated inter-rater reliability using **Cohen's Kappa ($\kappa$)** on benchmark decisions:
+To prove that my local LLM-as-a-Judge (`gemma4:e2b`) is reliable and mathematically aligned with human judgments, I evaluated inter-rater reliability using **Cohen's Kappa ($\kappa$)** on benchmark decisions:
 
 | Evaluation Dimension      | Observed Agreement (%) | Cohen's Kappa ($\kappa$) |  Landis & Koch Interpretation  |
 | :------------------------ | :--------------------: | :----------------------: | :----------------------------: |
@@ -317,7 +317,7 @@ _\*Both human and LLM Judge scored tone at near 100% agreement, resulting in nea
 
 ## 6. Failure Analysis: Deep-Dive into Top 5 Failure Modes
 
-Our empirical benchmark exposed five critical edge cases:
+My empirical benchmark exposed five critical edge cases:
 
 ### Failure Mode 1: The "Polite Double Charge" False Negative (Escalation Blindspot)
 
@@ -332,7 +332,7 @@ Our empirical benchmark exposed five critical edge cases:
 - **Simple Baseline Output**:
   > `@123380 Alright. Can you check if you have the latest versions of Spotify and Tinder installed? /RH`
 - **Root Cause**: The Simple Baseline blindly outputs real past agent replies verbatim. It exposed old Twitter user handles (`@123380`), human agent employee codes (`/RH`), and completely irrelevant historical partner promotions (Tinder).
-- **System Value of `SpotifySupportAgent`**: Our generative drafter successfully extracted the troubleshooting logic (check account email and country settings via DM) while stripping all PII and third-party partner hallucinations.
+- **System Value of `SpotifySupportAgent`**: The generative drafter successfully extracted the troubleshooting logic (check account email and country settings via DM) while stripping all PII and third-party partner hallucinations.
 
 ### Failure Mode 3: Twitter PII Vulnerability in Public Replies
 
@@ -358,11 +358,11 @@ A senior machine learning engineer must critically challenge their own metrics. 
 1. **Headline Accuracy vs. Class Imbalance**:
    - Over 70% of customer support tweets on Twitter are routine inquiries (`General Inquiry/Other` or `Audio/Playback`). A naive model predicting `General Inquiry` for everything would achieve ~48% overall accuracy while delivering 0% utility. **Macro-F1** is the only trustworthy metric.
 2. **Data Leakage Isolation**:
-   - If benchmark test tweets were present in the RAG knowledge base, the drafter could achieve 100% accuracy simply by memorization. We mathematically isolated the 199 Golden Set rows _before_ building the vector database and _before_ training the TF-IDF baselines.
+   - If benchmark test tweets were present in the RAG knowledge base, the drafter could achieve 100% accuracy simply by memorization. I mathematically isolated the 199 Golden Set rows _before_ building the vector database and _before_ training the TF-IDF baselines.
 3. **Single-Turn vs. Multi-Turn Reality**:
    - This benchmark evaluates the **First Response Turn**. In production, resolving a password or billing dispute takes 3–5 conversational turns over DM. High first-turn empathy does not guarantee faster Mean Time to Resolution (MTTR).
 4. **SLM Parameter Scale (2B vs. 70B)**:
-   - We intentionally selected `gemma4:e2b` to prove local edge feasibility. While it exhibits lower zero-shot classification recall than GPT-4o, pairing it with heuristic overrides achieves production parity at $0 operating cost.
+   - I intentionally selected `gemma4:e2b` to prove local edge feasibility. While it exhibits lower zero-shot classification recall than GPT-4o, pairing it with heuristic overrides achieves production parity at $0 operating cost.
 
 ---
 
@@ -373,19 +373,19 @@ A senior machine learning engineer must critically challenge their own metrics. 
 3. **Decoupled Architecture over Monolithic Prompting**: Small language models suffer instruction drift when tasked with classification, escalation, and drafting simultaneously. Splitting the agent into 4 sequential stages improved formatting stability to 100%.
 4. **Binary Rubrics over 1–5 Likert Scales**: Evaluator models under 8B parameters exhibit severe central tendency bias on 1–5 scales (grading everything a 3 or 4). Developing strict binary (Yes/No) rubrics increased human-evaluator agreement to 93.3%.
 5. **Stratified K-Means Clustering for Golden Set Curation**: Uniform random sampling would over-represent viral complaints. Generating sentence embeddings and sampling across 15 K-Means clusters guaranteed semantic diversity across rare billing and feature requests.
-6. **Mandatory `/AI` Signature**: Real `@SpotifyCares` human agents sign off with agent initials (e.g. `/CE`, `/RM`). We enforced an `/AI` sign-off to respect brand formatting conventions while complying with automated AI disclosure regulations.
+6. **Mandatory `/AI` Signature**: Real `@SpotifyCares` human agents sign off with agent initials (e.g. `/CE`, `/RM`). I enforced an `/AI` sign-off to respect brand formatting conventions while complying with automated AI disclosure regulations.
 7. **Public Tweet to DM Security Redirection**: The model is forbidden from asking customers to reply publicly with account details; it must always instruct them to send a Direct Message.
 8. **TensorFlow Protobuf Warning Suppression**: `sentence-transformers` crashed due to a local macOS Protobuf version mismatch when TensorFlow was present. Solved by injecting `os.environ["USE_TF"] = "NO"` and `os.environ["USE_TORCH"] = "YES"` before module imports.
 9. **Zero-Division Handling in Metric Computations**: In rare class evaluation, classes with 0 predicted instances crash standard precision/recall formulas. Enforced `zero_division=0` across all evaluation scripts.
-10. **In-Memory Precomputed TF-IDF Cosine Cache**: In `SimpleBaselineAgent`, we precomputed the sparse TF-IDF matrix for all historical customer queries, reducing verbatim match lookup latency from 1.2s to 0.02s per query.
+10. **In-Memory Precomputed TF-IDF Cosine Cache**: In `SimpleBaselineAgent`, I precomputed the sparse TF-IDF matrix for all historical customer queries, reducing verbatim match lookup latency from 1.2s to 0.02s per query.
 11. **Sub-Normal Matrix Multiplication Warning Filter**: Suppressed internal Scikit-Learn `RuntimeWarning: divide by zero encountered in matmul` caused by sparse vector normalization edge cases.
 12. **Structured JSON Output Protocol**: Standardized the final agent response as an enterprise JSON dictionary (`customer_tweet`, `predicted_intent`, `escalate`, `escalation_reason`, `retrieved_context`, `drafted_reply`) for drop-in compatibility with enterprise ticketing webhooks.
 
 ---
 
-## 9. What We'd Do Next with One More Week
+## 9. What I'd Do Next with One More Week
 
-Given seven more engineering days, our roadmap focuses on production hardening, latency reduction, and multi-turn conversation memory:
+Given seven more engineering days, my roadmap focuses on production hardening, latency reduction, and multi-turn conversation memory:
 
 1. **LoRA Fine-Tuning on Brand Tone & Safety**:
    - Rather than relying solely on zero-shot prompting, fine-tune an open SLM (e.g. `Llama-3.2-3B` or `Gemma-2-2B`) using LoRA (Low-Rank Adaptation) on the 43,000 historical `@SpotifyCares` thread pairs. This would bake Spotify's exact empathetic tone and `/AI` formatting directly into the model weights, cutting prompt length and inference latency by 40%.
@@ -448,22 +448,7 @@ pip install -r requirements.txt
    python eval/human_eval.py
    ```
 
----
 
-## 9. What We'd Do Next with One More Week
-
-Given seven more engineering days, our roadmap focuses on production hardening, latency reduction, and multi-turn conversation memory:
-
-1. **LoRA Fine-Tuning on Brand Tone & Safety**:
-   - Rather than relying solely on zero-shot prompting, fine-tune an open SLM (e.g. `Llama-3.2-3B` or `Gemma-2-2B`) using LoRA (Low-Rank Adaptation) on the 43,000 historical `@SpotifyCares` thread pairs. This would bake Spotify's exact empathetic tone and `/AI` formatting directly into the model weights, cutting prompt length and inference latency by 40%.
-2. **Multi-Turn DM Transition State Tracking**:
-   - Build a stateful session manager that transitions seamlessly from public tweets to private Direct Messages. Track conversation states: `AWAITING_EMAIL_DM` -> `CREDENTIAL_VERIFIED` -> `RESOLUTION_OFFERED`.
-3. **Hybrid Sparse-Dense Vector Index (BM25 + Dense RAG)**:
-   - Combine dense vector embeddings (`all-MiniLM-L6-v2`) with sparse BM25 indexing (Reciprocal Rank Fusion). This eliminates vocabulary mismatch when users cite obscure error codes (e.g. `Error 30`, `Firewall code 103`) that dense embeddings occasionally smooth over.
-4. **Live Human-in-the-Loop Webhook Integration**:
-   - Implement an outgoing webhook connector for Hiver / Zendesk / Slack. When `escalate: True` is triggered, post an internal triage alert containing the user's tweet, the AI's proposed response draft, and the escalation reason for 1-click human agent approval.
-
----
 
 ## 11. Citations & Attributions
 
