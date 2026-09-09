@@ -16,11 +16,12 @@ def auto_label_golden_set(input_path="data/processed/golden_set_unlabeled.csv",
         df['escalate_label'] = ""
         df['escalation_reason'] = ""
 
-    df['intent_label'] = df['intent_label'].astype(str)
-    df['escalate_label'] = df['escalate_label'].astype(str)
-    df['escalation_reason'] = df['escalation_reason'].astype(str)
+    df['intent_label'] = df['intent_label'].astype(str).fillna("")
+    df['escalate_label'] = df['escalate_label'].astype(str).fillna("")
+    df['escalation_reason'] = df['escalation_reason'].astype(str).fillna("")
 
-    unlabeled_idx = df[df['intent_label'] == ""].index
+    unlabeled_idx = df[(df['intent_label'] == "") |
+                       (df['intent_label'] == "nan")].index
 
     if len(unlabeled_idx) == 0:
         print("All examples are already labeled!")
