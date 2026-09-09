@@ -10,7 +10,7 @@ class IntentClassifier:
             'Feature Request',
             'General Inquiry/Other'
         ]
-        
+
         self.system_prompt = f"""You are an expert customer support routing AI for @SpotifyCares.
 Your ONLY job is to classify the customer's tweet into exactly one of the following categories:
 {', '.join(self.valid_intents)}
@@ -29,35 +29,35 @@ Rules:
         Forces the output to match one of the valid intents.
         """
         prompt = f"Customer Tweet: \"{tweet}\""
-        
+
         try:
             response = ollama.chat(model=self.model_name, messages=[
                 {'role': 'system', 'content': self.system_prompt},
                 {'role': 'user', 'content': prompt}
             ])
-            
+
             output = response['message']['content'].strip()
-            
-            # Clean up potential LLM conversational artifacts
+
             for valid_intent in self.valid_intents:
                 if valid_intent.lower() in output.lower():
                     return valid_intent
-                    
+
             return 'General Inquiry/Other'
-            
+
         except Exception as e:
             print(f"Error during classification: {e}")
             return 'General Inquiry/Other'
 
+
 if __name__ == "__main__":
     classifier = IntentClassifier()
-    
+
     test_tweets = [
         "Why did you charge my card twice this month?!",
         "The app keeps crashing when I try to play my Discover Weekly.",
         "I can't remember my password and the reset email isn't arriving."
     ]
-    
+
     print("Testing Intent Classifier...\n")
     for tweet in test_tweets:
         print(f"Tweet: {tweet}")

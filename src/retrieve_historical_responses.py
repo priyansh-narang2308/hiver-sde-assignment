@@ -3,6 +3,9 @@ import numpy as np
 import os
 from sklearn.neighbors import NearestNeighbors
 
+import warnings
+warnings.filterwarnings('ignore', category=RuntimeWarning)
+
 # CRITICAL: These must be set BEFORE importing sentence_transformers
 os.environ["USE_TF"] = "NO"
 os.environ["USE_TORCH"] = "YES"
