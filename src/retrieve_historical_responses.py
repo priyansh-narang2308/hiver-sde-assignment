@@ -34,10 +34,12 @@ class RAGRetriever:
         """
         Embeds the customer query and returns the historical agent responses to the most similar past queries.
         """
-        query_vector = self.model.encode([query])
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            query_vector = self.model.encode([query])
 
-        distances, indices = self.nn.kneighbors(
-            query_vector, n_neighbors=top_k)
+            distances, indices = self.nn.kneighbors(
+                query_vector, n_neighbors=top_k)
 
         results = []
         for dist, idx in zip(distances[0], indices[0]):
