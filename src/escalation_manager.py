@@ -43,7 +43,9 @@ Line 2: Reason: [One short sentence explaining why]
                 escalate = True
 
             if len(output) > 1:
-                reason = output[1].replace("Reason:", "").strip()
+                reason = output[1]
+                reason = reason.replace("Line 2:", "").replace(
+                    "Reason:", "").strip()
 
             if intent == 'Subscription/Billing' and ('fraud' in tweet.lower() or 'stolen' in tweet.lower()):
                 escalate = True
