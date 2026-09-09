@@ -1,0 +1,17 @@
+{
+  "helpfulness": {
+    "observed_agreement_pct": 66.66666666666666,
+    "cohens_kappa": 0.24242424242424243,
+    "interpretation": "Fair Agreement"
+  },
+  "tone": {
+    "observed_agreement_pct": 93.33333333333333,
+    "cohens_kappa": 0.0,
+    "interpretation": "Slight Agreement"
+  },
+  "groundedness": {
+    "observed_agreement_pct": 93.33333333333333,
+    "cohens_kappa": 0.6341463414634146,
+    "interpretation": "Substantial Agreement"
+  }
+}

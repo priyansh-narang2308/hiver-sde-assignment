@@ -1,0 +1,20 @@
+{
+  "SpotifySupportAgent": {
+    "helpfulness_pass_pct": 60.0,
+    "tone_pass_pct": 100.0,
+    "groundedness_pass_pct": 100.0,
+    "overall_pass_pct": 60.0
+  },
+  "Simple Baseline": {
+    "helpfulness_pass_pct": 40.0,
+    "tone_pass_pct": 80.0,
+    "groundedness_pass_pct": 60.0,
+    "overall_pass_pct": 40.0
+  },
+  "Trivial Baseline": {
+    "helpfulness_pass_pct": 80.0,
+    "tone_pass_pct": 100.0,
+    "groundedness_pass_pct": 100.0,
+    "overall_pass_pct": 80.0
+  }
+}
