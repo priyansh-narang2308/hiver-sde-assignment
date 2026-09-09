@@ -6,7 +6,23 @@ Built entirely using **100% free, local components**—leveraging a local Small 
 
 ---
 
-## 1. System Architecture
+## 1. Problem Framing & System Architecture
+
+### What "Good" Means for @SpotifyCares
+
+In consumer music streaming customer support:
+
+1. **Speed & First-Contact Empathy**: Acknowledging user frustration quickly with a polite, human-sounding tone rather than an indifferent mechanical reply.
+2. **Strict PII & Security Guardrails**: Never asking for passwords, payment credentials, or private email addresses publicly on Twitter/X. All credential-level investigations must redirect to Direct Messages (DMs).
+3. **High-Recall Escalation Safety**: Preventing churn by prioritizing angry users, billing errors, and cancellation threats straight to human specialists with a clear, auditable escalation reason.
+4. **Transparent Identity**: Compliantly signing off automated tweets with `/AI`, matching the `@SpotifyCares` agent signature style (e.g., `/CE`, `/RM`).
+
+### What We Chose NOT to Build (and Why)
+
+1. **No Direct Backend API Execution**: We explicitly chose _not_ to give the language model write-access tools to execute live refunds, password resets, or account deletions. In high-stakes production systems, granting autonomous payment execution to a generative model without human authorization creates severe security vulnerabilities. The agent serves as a high-precision triage and drafting co-pilot.
+2. **No Public Multi-Turn Resolution**: We chose not to resolve multi-turn issues publicly on Twitter threads. Account-specific issues require identity verification, which must occur privately over DMs.
+
+### System Architecture
 
 The pipeline decouples high-stakes customer triage into four specialized, audit-ready stages:
 
@@ -83,7 +99,36 @@ hiver/
 
 ---
 
-## 3. Results vs. Baselines
+## 3. Golden Evaluation Set: Sampling & Labeling Methodology
+
+The benchmark evaluation relies on a rigorously curated **199-example Golden Evaluation Set** stored in [`data/processed/golden_set.csv`](file:///Users/priyanshnarang/Desktop/hiver/data/processed/golden_set.csv) (meeting the 150–250 example requirement).
+
+### Sampling Strategy (Stratified Semantic Clustering)
+
+- **The Problem with Uniform Random Sampling**: Standard random sampling over Twitter customer support data heavily over-samples generic complaints and greetings while missing critical low-frequency events (e.g. complex billing errors, unauthorized charges, regional family account discrepancies).
+- **Our Solution**:
+  1. Embedded all 43,206 `@SpotifyCares` customer queries into 384-dimensional dense vectors using `all-MiniLM-L6-v2`.
+  2. Fitted an unsupervised **K-Means clustering model ($k=15$)** across the vector space to partition customer inquiries into distinct semantic clusters.
+  3. Conducted **stratified sampling** across all 15 clusters to select 199 diverse queries, ensuring representation across edge cases, rare billing issues, and technical audio bugs.
+
+### Ground-Truth Labeling Schema
+
+Each query in the Golden Set was annotated across three dimensions:
+
+1. **Intent Label**: Mapped strictly to one of 5 defined brand intents:
+   - `Login/Account Issue` (Password resets, locked credentials, family account profile errors)
+   - `Audio/Playback Issue` (App crashes, stuttering playback, song download/offline failures)
+   - `Subscription/Billing` (Double charges, premium renewal disputes, refund requests)
+   - `Feature Request` (Catalog additions, hardware integrations, UI feedback)
+   - `General Inquiry/Other` (Compliments, casual banter, general questions)
+2. **Escalate Label (`Yes` / `No`)**:
+   - Grounded in customer retention and financial safety criteria. Flagged as `Yes` if the customer exhibits extreme frustration, threatens cancellation/churn, reports fraud/stolen payment methods, or experienced a recurring charge dispute.
+3. **Escalation Reason**:
+   - A concise, 1-sentence audit trail justifying why human tier intervention is required.
+
+---
+
+## 4. Results vs. Baselines
 
 All three systems were benchmarked head-to-head on identical test queries sampled from the stratified Golden Set:
 
@@ -240,3 +285,35 @@ pip install -r requirements.txt
    ```bash
    python eval/human_eval.py
    ```
+
+---
+
+## 9. What We'd Do Next with One More Week
+
+Given seven more engineering days, our roadmap focuses on production hardening, latency reduction, and multi-turn conversation memory:
+
+1. **LoRA Fine-Tuning on Brand Tone & Safety**:
+   - Rather than relying solely on zero-shot prompting, fine-tune an open SLM (e.g. `Llama-3.2-3B` or `Gemma-2-2B`) using LoRA (Low-Rank Adaptation) on the 43,000 historical `@SpotifyCares` thread pairs. This would bake Spotify's exact empathetic tone and `/AI` formatting directly into the model weights, cutting prompt length and inference latency by 40%.
+2. **Multi-Turn DM Transition State Tracking**:
+   - Build a stateful session manager that transitions seamlessly from public tweets to private Direct Messages. Track conversation states: `AWAITING_EMAIL_DM` -> `CREDENTIAL_VERIFIED` -> `RESOLUTION_OFFERED`.
+3. **Hybrid Sparse-Dense Vector Index (BM25 + Dense RAG)**:
+   - Combine dense vector embeddings (`all-MiniLM-L6-v2`) with sparse BM25 indexing (Reciprocal Rank Fusion). This eliminates vocabulary mismatch when users cite obscure error codes (e.g. `Error 30`, `Firewall code 103`) that dense embeddings occasionally smooth over.
+4. **Live Human-in-the-Loop Webhook Integration**:
+   - Implement an outgoing webhook connector for Hiver / Zendesk / Slack. When `escalate: True` is triggered, post an internal triage alert containing the user's tweet, the AI's proposed response draft, and the escalation reason for 1-click human agent approval.
+
+---
+
+## 10. Citations & Attributions
+
+In adherence to academic and engineering integrity, all open datasets, libraries, and architectures utilized in this repository are credited below:
+
+1. **Dataset**:
+   - _Customer Support on Twitter_ dataset published on Kaggle by ThoughtVector: [Kaggle Dataset Link](https://www.kaggle.com/datasets/thoughtvector/customer-support-on-twitter). Over 3 million anonymized tweets between customers and corporate brands.
+2. **Embedding Model**:
+   - _all-MiniLM-L6-v2_ sentence transformer developed by the Sentence-Transformers team / Hugging Face: [Model Card](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2). Mappings of 384-dimensional dense semantic vectors.
+3. **Inference Engine**:
+   - _Ollama_ open-source local inference runtime ([ollama.com](https://ollama.com/)), executing Google's open weights (`gemma4:e2b` / `gemma2`).
+4. **Inter-Rater Reliability Benchmark**:
+   - _Landis, J. R., & Koch, G. G. (1977)_: "The measurement of observer agreement for categorical data." _Biometrics_, 33(1), 159-174. Used for the mathematical interpretation of Cohen's Kappa score.
+5. **Machine Learning Frameworks**:
+   - _Scikit-Learn_ (`NearestNeighbors`, `TfidfVectorizer`, `LogisticRegression`, `KMeans`, metrics calculation), _Pandas_, and _NumPy_.
