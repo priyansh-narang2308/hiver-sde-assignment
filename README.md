@@ -228,7 +228,7 @@ Metrics JSON saved to: eval/benchmark_metrics.json
 ======================================================================
 BENCHMARK COMPARISON SUMMARY TABLE
 ======================================================================
-System                    | Intent Acc  | Intent F1  | Esc Recall  | Esc F1  
+System                    | Intent Acc  | Intent F1  | Esc Recall  | Esc F1
 ----------------------------------------------------------------------
 Trivial Baseline          |      20.0% |      6.7% |     100.0% |   18.2%
 Simple Baseline           |      85.0% |     71.7% |     100.0% |  100.0%
@@ -246,10 +246,10 @@ Individual human agreement scores saved to: eval/human_agreements.csv
 ======================================================================
 COHEN'S KAPPA INTER-RATER RELIABILITY RESULTS
 ======================================================================
-Dimension            | Observed Agreement   | Cohen’s Kappa   | Interpretation      
+Dimension            | Observed Agreement   | Cohen’s Kappa   | Interpretation
 ----------------------------------------------------------------------
-Helpfulness          |               66.7% |         0.242 | Fair Agreement      
-Tone                 |               93.3% |         0.000 | Slight Agreement    
+Helpfulness          |               66.7% |         0.242 | Fair Agreement
+Tone                 |               93.3% |         0.000 | Slight Agreement
 Groundedness         |               93.3% |         0.634 | Substantial Agreement
 ======================================================================
 
@@ -286,8 +286,8 @@ RUNNING END-TO-END SPOTIFY SUPPORT AGENT PIPELINE TEST
     "We can certainly help you with that! Please send us a direct message with your account information so we can look into the steps for creating a collaborative playlist for you /AI"
 ------------------------------------------------------------
 ```
-</details>
 
+</details>
 
 ### Generative Draft Quality Benchmark (LLM-as-a-Judge with Binary Rubrics)
 
