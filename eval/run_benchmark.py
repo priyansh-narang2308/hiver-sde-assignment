@@ -1,14 +1,22 @@
+import os
+import sys
+
+# Ensure project root is in sys.path regardless of execution directory
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(current_dir)
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+import argparse
+import json
+import warnings
+import pandas as pd
+from tqdm import tqdm
+
 from eval.metrics import evaluate_system, print_evaluation_report
 from src.baselines.trivial_baseline import TrivialBaselineAgent
 from src.baselines.simple_baseline import SimpleBaselineAgent
 from src.support_agent import SpotifySupportAgent
-import warnings
-import os
-import sys
-import argparse
-import json
-import pandas as pd
-from tqdm import tqdm
 
 os.environ["USE_TF"] = "NO"
 os.environ["USE_TORCH"] = "YES"
@@ -16,10 +24,6 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
 warnings.filterwarnings('ignore', category=RuntimeWarning)
 
-current_dir = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.dirname(current_dir)
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
 
 
 def run_benchmark(golden_set_path="data/processed/golden_set.csv",
