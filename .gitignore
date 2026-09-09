@@ -40,7 +40,11 @@ venv.bak/
 
 # Data and databases
 data/raw/*
-data/processed/*
+data/processed/*.npy
+data/processed/spotify_threads*.csv
+data/processed/rag_embeddings.npy
+!data/processed/golden_set.csv
+!data/processed/golden_set_unlabeled.csv
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 *.sqlite3

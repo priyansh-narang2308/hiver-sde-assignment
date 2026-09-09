@@ -101,7 +101,7 @@ hiver/
 
 ## 3. Golden Evaluation Set: Sampling & Labeling Methodology
 
-The benchmark evaluation relies on a rigorously curated **199-example Golden Evaluation Set** stored in [`data/processed/golden_set.csv`](file:///Users/priyanshnarang/Desktop/hiver/data/processed/golden_set.csv) (meeting the 150–250 example requirement).
+The benchmark evaluation relies on a rigorously curated **199-example Golden Evaluation Set** stored in [`data/processed/golden_set.csv`](data/processed/golden_set.csv) (also mirrored in [`eval/golden_set.csv`](eval/golden_set.csv) for direct access), meeting the 150–250 example requirement.
 
 ### Sampling Strategy (Stratified Semantic Clustering)
 
