@@ -1,7 +1,12 @@
 import pandas as pd
 import numpy as np
-from sentence_transformers import SentenceTransformer
 import os
+
+# Set env variables to prevent transformers from loading TensorFlow and crashing due to Protobuf mismatches
+os.environ["USE_TF"] = "NO"
+os.environ["USE_TORCH"] = "YES"
+
+from sentence_transformers import SentenceTransformer
 
 
 def generate_embeddings(input_csv="data/processed/spotify_threads.csv", output_npy="data/processed/customer_embeddings.npy"):
